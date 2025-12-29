@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hoja de Turnos - enGuardia</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="shortcut icon" href="icons/favicon.png" type="image/png">
+
+  <link rel="stylesheet" href="css/month.css">
+</head>
+
+<body>
+  <nav>
+    <h1>Hoja de Turnos</h1>
+    <a href="/month.html">Vista mensual</a>
+    <a href="/year.html">Vista anuál</a>
+  </nav>
+
+  <div class="controls">
+    <label for="monthSel">Mes:</label>
+    <select id="monthSel"></select>
+
+    <label for="yearSel">Año:</label>
+    <select id="yearSel"></select>
+
+    <label for="mode">Modalidad:</label>
+    <select id="mode">
+      <option value="12 2x3">12 2×3</option>
+      <option value="8 5x3">8 5×3</option>
+    </select>
+
+    <button id="generateBtn">Generar Hoja</button>
+    <button onclick="window.print()">Imprimir</button>
+  </div>
+
+  <div id="sheetContainer"></div>
+
+  <script src="js/guardia.js"></script>
+  <script src="js/month.js"></script>
+</body>
+
+</html>

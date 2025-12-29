@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Calendario anuál - enGuardia</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="shortcut icon" href="icons/favicon.png" type="image/png">
+
+  <link rel="stylesheet" href="css/vars.css">
+  <link rel="stylesheet" href="css/controls.css">
+  <link rel="stylesheet" href="css/year.css">
+</head>
+
+<body class="page">
+  <nav>
+    <h1>Hoja de Turnos</h1>
+    <a href="/month.html">Vista mensual</a>
+    <a href="/year.html">Vista anuál</a>
+  </nav>
+  <!-- Controls -->
+  <section class="controls">
+    <div class="field">
+      <label for="mode">Modalidad:</label>
+      <select id="mode" name="mode" onchange="renderYear(displayedYear)">
+        <option value="12 2x3">12 2x3</option>
+        <option value="8 5x3">8 5x3</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="guard">Guardia:</label>
+      <select id="guard" name="guard" onchange="renderYear(displayedYear)">
+        <option value="0">Primera</option>
+        <option value="1">Segunda</option>
+        <option value="2">Tercera</option>
+        <option value="3">Quarta</option>
+        <option value="4">Quinta</option>
+      </select>
+    </div>
+  </section>
+
+
+  <header>
+    <button id="prevBtn">< Anterior</button>
+    <h1 id="yearTitle"></h1>
+    <button id="nextBtn">Siguiente ></button>
+  </header>
+
+  <main id="calendarContainer"></main>
+
+  <div style="width: 100%;display: flex;justify-content: space-around;">
+    <!-- Legend -->
+    <section class="legend">
+      <h3>Leyenda (en caso de ser válido)</h3>
+      <ul>
+        <li class="li-blue">Primer turno</li>
+        <li class="li-red">Segundo turno</li>
+        <li class="li-green">Tercer turno</li>
+      </ul>
+    </section>
+  
+    <div>
+      <h3>Recuento</h3>
+      <div id="daysCounter"></div>
+    </div>
+  </div>
+
+  <script src="js/guardia.js"></script>
+  <script src="js/year.js"></script>
+</body>
+
+</html>

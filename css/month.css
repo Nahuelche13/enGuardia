@@ -1,0 +1,110 @@
+:root {
+    --name-width: 200px;
+    /* width of the left‑most “Name” column */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #f0f0f0;
+    font-size: .75rem;
+}
+
+h1 {
+    margin-bottom: .2em;
+}
+
+.controls {
+    margin-bottom: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+button,
+select {
+    padding: .3rem .6rem;
+    font-size: .75rem;
+}
+
+.group {
+    background: #fff;
+    padding: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #ccc;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+    /* forces columns to respect <col> widths */
+}
+
+/* column definitions */
+col.name-col {
+    width: var(--name-width);
+}
+
+/* left column */
+col.day-col {
+    width: auto;
+}
+
+/* day columns share remaining space */
+
+th,
+td {
+    border: 1px solid #999;
+    text-align: center;
+    vertical-align: middle;
+    font-size: .75rem;
+    word-wrap: break-word;
+}
+
+th.day-num {
+    background: #e2e6ea;
+}
+
+th.day-wk {
+    background: #f5f5f5;
+    font-weight: normal;
+}
+
+td.shift {
+    height: 22px;
+    cursor: text;
+}
+
+td.name {
+    text-align: left;
+    padding-left: 4px;
+}
+
+@media print {
+    nav, h1, h2, .controls, button {
+        display: none;
+    }
+
+    td {
+        padding: 0;
+    }
+
+
+    h3 {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        margin: 0;
+        background: #fff;
+    }
+
+    .group {
+        page-break-inside: avoid;
+        margin: 0;
+        padding: 0;
+    }
+}

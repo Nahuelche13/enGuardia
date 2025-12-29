@@ -1,0 +1,73 @@
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+    max-width: var(--max-width);
+}
+
+.field {
+    flex: 1 1 150px;
+    position: relative;
+    /* for the custom arrow */
+}
+
+label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+/* Modern <select> styling – now using variables */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    width: 100%;
+    padding: var(--gap) 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-select);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    box-shadow: inset 0 1px 2px var(--shadow-inner);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+/* Custom chevron */
+select::after {
+    content: "▾";
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* Interaction states */
+select:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px rgba(105, 100, 255, .2);
+}
+
+select:hover {
+    border-color: var(--border);
+}
+
+select:disabled {
+    background: #f5f5f5;
+    color: #999;
+}
+
+@media print {
+    section.controls,
+    header,
+    h2 {
+        display: none !important;
+    }
+}
