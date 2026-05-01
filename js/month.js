@@ -168,6 +168,8 @@ function generateSheet() {
 populateSelects();
 document.getElementById('generateBtn').addEventListener('click', generateSheet);
 document.getElementById('mode').addEventListener('change', generateSheet);
+document.getElementById('monthSel').addEventListener('change', generateSheet);
+document.getElementById('yearSel').addEventListener('change', generateSheet);
 
 /* ---------- Initial render ---------- */
 generateSheet();

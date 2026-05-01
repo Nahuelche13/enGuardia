@@ -1,5 +1,5 @@
 function daysSinceUTC(date) {
-  const start = new Date(2026, 0, 1);
+  const start = new Date(2026, 4, 1);
   const target = new Date(date);
   const diff = Math.abs(
     Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()) -

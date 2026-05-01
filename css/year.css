@@ -8,7 +8,7 @@
 body {
   background: var(--bg-page);
   color: var(--text-primary);
-  line-height: 1.4;
+  /* line-height: 1.4; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,7 +39,7 @@ header button:hover {
 /* Calendar container */
 #calendarContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(10cm, 1fr));
   gap: 1rem;
   width: 90%;
   max-width: 1200px;
@@ -59,7 +59,7 @@ header button:hover {
   color: white;
   margin: 0;
   padding: .5rem 0;
-  font-size: 1rem;
+  /* font-size: 1rem; */
 }
 
 /* Days grid */
@@ -82,11 +82,4 @@ header button:hover {
 
 .day {
   border: 1px solid var(--border);
-}
-
-/* Responsive tweak */
-@media (max-width: 500px) {
-  header {
-    flex-direction: column;
-  }
 }
