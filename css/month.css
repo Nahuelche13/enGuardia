@@ -3,43 +3,74 @@
     /* width of the left‑most “Name” column */
 }
 
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background: #f0f0f0;
-    font-size: .75rem;
+#sheetContainer > h2 {
+    margin: 6px 2px 12px;
+    font-size: 2rem;
+    font-weight: 800;
 }
 
-h1 {
-    margin-bottom: .2em;
+/* narrower name column on phones */
+@media (max-width: 600px) {
+    :root {
+        --name-width: 110px;
+    }
 }
 
-.controls {
-    margin-bottom: 1em;
+/* ---------- Turn legend ---------- */
+.legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 6px 18px;
+    margin: 0 2px 18px;
+    padding: 0;
+    list-style: none;
+    font-size: .85rem;
+}
+
+.legend li {
+    display: flex;
     align-items: center;
+    gap: 6px;
 }
 
-button,
-select {
-    padding: .3rem .6rem;
-    font-size: .75rem;
+.chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: .8rem;
 }
 
+/* ---------- One card per working group ---------- */
 .group {
-    background: #fff;
-    padding: 8px;
-    margin-bottom: 25px;
-    border: 1px solid #ccc;
+    margin-bottom: 24px;
+    padding: 12px 12px 14px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+.group h3 {
+    margin: 2px 2px 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
 }
 
 table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     width: 100%;
+    min-width: 900px;
     table-layout: fixed;
     /* forces columns to respect <col> widths */
+    font-size: .8rem;
 }
 
 /* column definitions */
@@ -56,55 +87,180 @@ col.day-col {
 
 th,
 td {
-    border: 1px solid #999;
+    border-right: 1px solid var(--separator);
+    border-bottom: 1px solid var(--separator);
     text-align: center;
     vertical-align: middle;
-    font-size: .75rem;
     word-wrap: break-word;
 }
 
+th:last-child,
+td:last-child {
+    border-right: none;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
 th.day-num {
-    background: #e2e6ea;
+    padding-top: 4px;
+    font-weight: 700;
 }
 
 th.day-wk {
-    background: #f5f5f5;
-    font-weight: normal;
+    padding-bottom: 4px;
+    font-weight: 400;
+    font-size: .7rem;
+    opacity: var(--dim-opacity);
+}
+
+th.day-num,
+th.day-wk {
+    border-right: none;
+}
+
+tr:first-child th {
+    border-bottom: none;
 }
 
 td.shift {
-    height: 22px;
+    height: 30px;
     cursor: text;
 }
 
+/* keep names in view while the days scroll sideways */
+th.name,
 td.name {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--card-bg-solid);
+}
+
+td.name {
+    padding: 0 8px;
     text-align: left;
-    padding-left: 4px;
+    font-weight: 700;
+}
+
+td.name:empty::before {
+    content: "Nombre…";
+    font-weight: 400;
+    opacity: .35;
+}
+
+td.shift[data-turn] {
+    font-weight: 700;
+    border-radius: 0;
+}
+
+td.shift[data-turn="1"],
+.chip[data-turn="1"] {
+    background: color-mix(in srgb, var(--turn-1) 15%, transparent);
+    color: var(--turn-1);
+}
+
+td.shift[data-turn="2"],
+.chip[data-turn="2"] {
+    background: color-mix(in srgb, var(--turn-2) 15%, transparent);
+    color: var(--turn-2);
+}
+
+td.shift[data-turn="3"],
+.chip[data-turn="3"] {
+    background: color-mix(in srgb, var(--turn-3) 15%, transparent);
+    color: var(--turn-3);
+}
+
+th.today {
+    color: var(--accent);
+}
+
+td.today {
+    box-shadow: inset 2px 0 var(--accent-bg), inset -2px 0 var(--accent-bg);
+}
+
+/* corner mark on cells changed by hand */
+td.shift.edited {
+    background-image: linear-gradient(225deg, var(--accent-bg) 5px, transparent 5px);
+}
+
+td[contenteditable="true"]:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent-bg) 60%, transparent);
+    background: color-mix(in srgb, var(--accent-bg) 10%, transparent);
 }
 
 @media print {
-    nav, h1, h2, .controls, button {
+    nav, h1, .controls, button {
         display: none;
+    }
+
+    #sheetContainer > h2 {
+        margin: 0 0 4px;
+        font-size: 1.2rem;
+    }
+
+    .legend {
+        margin-bottom: 8px;
+    }
+
+    .chip {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .clamp {
+        max-width: none;
+        padding: 0;
     }
 
     td {
         padding: 0;
     }
 
-
     h3 {
         margin: 0;
         padding: 0;
-    }
-
-    body {
-        margin: 0;
-        background: #fff;
     }
 
     .group {
         page-break-inside: avoid;
         margin: 0;
         padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .table-scroll {
+        overflow: visible;
+    }
+
+    table {
+        min-width: 0;
+        font-size: 0.65rem;
+    }
+
+    th,
+    td {
+        border: 1px solid #999 !important;
+    }
+
+    td.shift {
+        height: 18px;
+    }
+
+    th.today {
+        color: inherit;
+    }
+
+    td.today {
+        box-shadow: none;
+    }
+
+    td.shift[data-turn] {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
     }
 }

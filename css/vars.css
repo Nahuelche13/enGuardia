@@ -1,99 +1,80 @@
 /* -------------------------------------------------
-   Design Tokens (variables)
+   Design tokens — based on the libadwaita palette
    ------------------------------------------------- */
 :root {
-    /* Accent & interactive */
-    --accent: #6964ff;
-    --accent-light: #9a8eff;
-    /* dark‑mode accent */
+    color-scheme: light dark;
 
-    /* Palette */
-    --bg-page: #edecec;
-    --bg-calendar: #ededed;
-    --bg-select: #ffffff;
-    --bg-select-hover: #f2f2f2;
+    /* Accent */
+    --accent-bg: #3584e4;
+    --accent-fg: #ffffff;
+    --accent: #1c71d8;
 
-    /* Text */
-    --text-primary: #333333;
-    --text-inverse: #ffffff;
-    --text-muted: #aeabab;
-    /* navigation arrows */
-    --text-calendar: #414141;
+    /* Surfaces */
+    --window-bg: #fafafb;
+    --window-fg: rgba(0, 0, 6, .8);
+    --view-bg: #ffffff;
+    --headerbar-bg: #ffffff;
+    --headerbar-shade: rgba(0, 0, 6, .12);
+    --card-bg: #ffffff;
+    --card-bg-solid: #ffffff;  /* card-bg flattened onto window-bg, for sticky cells */
+    --card-shadow:
+        0 0 0 1px rgba(0, 0, 6, .03),
+        0 1px 3px 1px rgba(0, 0, 6, .07),
+        0 2px 6px 2px rgba(0, 0, 6, .03);
 
-    /* Borders & shadows */
-    --border: #bbbbbb;
-    --border-focus: var(--accent);
-    --shadow-inner: rgba(0, 0, 0, .05);
+    /* Lines & widgets */
+    --border: rgba(0, 0, 6, .15);
+    --separator: rgba(0, 0, 6, .1);
+    --button-bg: rgba(0, 0, 6, .08);
+    --button-hover: rgba(0, 0, 6, .12);
+    --button-active: rgba(0, 0, 6, .22);
+    --dim-opacity: .55;
+    --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23000006' stroke-opacity='.8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 
-    /* Spacing & radii (optional, handy for future tweaks) */
-    --radius: 6px;
-    --gap: 0.45rem;
-    --max-width: 340px;
+    /* Shift colours (text / tint) */
+    --turn-1: #1c71d8;
+    --turn-2: #c01c28;
+    --turn-3: #1b8553;
+    /* Shift colours (solid fills, white text) */
+    --turn-1-solid: #3584e4;
+    --turn-2-solid: #e01b24;
+    --turn-3-solid: #26a269;
+
+    /* Shape & spacing */
+    --radius-sm: 6px;
+    --radius: 12px;
+    --gap: 12px;
+    --clamp: 1200px;
+
+    --font: "Adwaita Sans", "Cantarell", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
 }
 
-/* Dark‑mode overrides */
+/* Dark style */
 @media (prefers-color-scheme: dark) {
     :root {
-        --accent: var(--accent-light);
-        --bg-page: #1e1e1e;
-        --bg-calendar: #2c2c2c;
-        --bg-select: #2b2b2b;
-        --bg-select-hover: #383838;
-        --text-primary: #e0e0e0;
-        --text-muted: #aaaaaa;
-        --text-calendar: #d0d0d0;
-        --border: #555555;
-        --shadow-inner: rgba(255, 255, 255, .03);
+        --accent: #78aeed;
+
+        --window-bg: #222226;
+        --window-fg: #ffffff;
+        --view-bg: #1d1d20;
+        --headerbar-bg: #2e2e32;
+        --headerbar-shade: rgba(0, 0, 6, .36);
+        --card-bg: rgba(255, 255, 255, .08);
+        --card-bg-solid: #343437;
+        --card-shadow:
+            0 0 0 1px rgba(0, 0, 6, .09),
+            0 1px 3px 1px rgba(0, 0, 6, .18),
+            0 2px 6px 2px rgba(0, 0, 6, .09);
+
+        --border: rgba(255, 255, 255, .15);
+        --separator: rgba(255, 255, 255, .1);
+        --button-bg: rgba(255, 255, 255, .1);
+        --button-hover: rgba(255, 255, 255, .15);
+        --button-active: rgba(255, 255, 255, .3);
+        --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+        --turn-1: #78aeed;
+        --turn-2: #ff938c;
+        --turn-3: #78e9ab;
     }
-}
-
-
-/* -------------------------------------------------
-   Legend (list markers)
-   ------------------------------------------------- */
-.legend ul {
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.legend li {
-    list-style: square;
-}
-
-.li-blue::marker {
-    color: blue;
-}
-
-.li-red::marker {
-    color: red;
-}
-
-.li-green::marker {
-    color: green;
-}
-
-
-
-/* Inactive filler cells (previous/next month) */
-.inactive {
-    background: #858484;
-    /* keep as‑is – not part of the palette */
-}
-
-/* Colour‑coding classes used by your script */
-.red {
-    background: red;
-}
-
-.blue {
-    background: blue;
-}
-
-.green {
-    background: green;
-}
-
-:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
 }

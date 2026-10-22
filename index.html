@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>enGuardia</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="shortcut icon" href="icons/favicon.png" type="image/png">
+
+  <script>
+    // Open the view used last time (yearly by default)
+    let view = null;
+    try { view = localStorage.getItem('enGuardia.view'); } catch (e) { }
+    location.replace(view === 'month.html' ? 'month.html' : 'year.html');
+  </script>
+</head>
+
+<body>
+  <p><a href="month.html">Mensual</a> · <a href="year.html">Anual</a></p>
+</body>
+
+</html>

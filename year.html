@@ -1,73 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Calendario anuál - enGuardia</title>
+
+  <title>Calendario anual - enGuardia</title>
 
   <link rel="manifest" href="manifest.json">
   <link rel="shortcut icon" href="icons/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/favicon-192.png">
 
   <link rel="stylesheet" href="css/vars.css">
-  <link rel="stylesheet" href="css/controls.css">
+  <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/year.css">
 </head>
 
-<body class="page">
-  <nav style="margin-top: 1rem;">
-    <h1>Hoja de Turnos</h1>
-    <a href="/enGuardia/month.html">Vista mensual</a>
-    <a href="/enGuardia/year.html">Vista anuál</a>
-  </nav>
+<body>
+  <header class="headerbar">
+    <div class="headerbar-start">
+      <span class="app-title"><img src="icons/favicon.svg" alt=""><span class="app-name">enGuardia</span></span>
+    </div>
+    <nav class="view-switcher" aria-label="Vistas">
+      <a href="month.html">Mensual</a>
+      <a href="year.html" aria-current="page">Anual</a>
+    </nav>
+    <div class="headerbar-end">
+      <button id="exportBtn" class="flat" title="Exportar al calendario (.ics)" aria-label="Exportar al calendario">
+        <svg class="icon" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 1.5v8M4.5 6 8 9.5 11.5 6M2 11v3.5h12V11" />
+        </svg>
+        <span class="btn-label">Exportar</span>
+      </button>
+      <button class="flat" onclick="window.print()" title="Imprimir" aria-label="Imprimir">
+        <svg class="icon" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M4 6V1.5h8V6M4 12H2V6h12v6h-2M4 9.5h8v5H4z" />
+        </svg>
+        <span class="btn-label">Imprimir</span>
+      </button>
+    </div>
+  </header>
+
   <!-- Controls -->
-  <section class="controls">
+  <section class="toolbar controls">
     <div class="field">
-      <label for="mode">Modalidad:</label>
+      <label for="mode">Modalidad</label>
       <select id="mode" name="mode" onchange="renderYear(displayedYear)">
-        <option value="12 2x3">12 2x3</option>
-        <option value="8 5x3">8 5x3</option>
+        <option value="12 2x3">12hs 2×3</option>
+        <option value="8 5x3">8hs 5×3</option>
       </select>
     </div>
 
     <div class="field">
-      <label for="guard">Guardia:</label>
+      <label for="guard">Guardia</label>
       <select id="guard" name="guard" onchange="renderYear(displayedYear)">
         <option value="0">Primera</option>
         <option value="1">Segunda</option>
         <option value="2">Tercera</option>
-        <option value="3">Quarta</option>
+        <option value="3">Cuarta</option>
         <option value="4">Quinta</option>
       </select>
     </div>
   </section>
 
-
-  <header>
-    <button id="prevBtn">< Anterior</button>
-    <h1 id="yearTitle"></h1>
-    <button id="nextBtn">Siguiente ></button>
-  </header>
-
-  <main id="calendarContainer"></main>
-
-  <div style="width: 100%;display: flex;padding: 1rem; justify-content: space-around;">
-    <!-- Legend -->
-    <section class="legend">
-      <h3>Leyenda (en caso de ser válido)</h3>
-      <ul>
-        <li class="li-blue">Primer turno</li>
-        <li class="li-red">Segundo turno</li>
-        <li class="li-green">Tercer turno</li>
-      </ul>
-    </section>
-  
-    <div>
-      <h3>Recuento</h3>
-      <div id="daysCounter"></div>
+  <main class="clamp">
+    <div class="year-nav">
+      <div class="year-nav-center">
+        <button id="prevBtn" class="circular" title="Año anterior (←)" aria-label="Año anterior">
+          <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+        </button>
+        <h1 id="yearTitle"></h1>
+        <button id="nextBtn" class="circular" title="Año siguiente (→)" aria-label="Año siguiente">
+          <svg class="icon" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>
+        </button>
+      </div>
+      <button id="todayBtn" class="flat" hidden>Hoy</button>
     </div>
-  </div>
+
+    <div id="calendarContainer"></div>
+
+    <div class="summary">
+      <!-- Legend -->
+      <section class="preferences-group">
+        <h3 class="heading">Leyenda</h3>
+        <p class="caption dim-label">En caso de ser válido</p>
+        <ul class="boxed-list">
+          <li><span class="swatch blue"></span>Primer turno</li>
+          <li><span class="swatch red"></span>Segundo turno</li>
+          <li><span class="swatch green"></span>Tercer turno</li>
+        </ul>
+      </section>
+
+      <section class="preferences-group">
+        <h3 class="heading">Recuento</h3>
+        <div id="daysCounter" class="boxed-list"></div>
+      </section>
+    </div>
+  </main>
 
   <script src="js/guardia.js"></script>
   <script src="js/year.js"></script>

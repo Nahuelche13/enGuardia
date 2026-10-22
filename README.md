@@ -1,5 +1,7 @@
 # enGuardia
 
-[Mensual](/enGuardia/month.html)
+[Mensual](month.html)
 
-[Anuál](/enGuardia/year.html)
+[Anual](year.html)
+
+Tests de la rotación: `node --test tests/`

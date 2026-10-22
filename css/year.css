@@ -1,85 +1,171 @@
-/* Reset a bit */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ---------- Year navigation ---------- */
+.year-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin: 6px 0 24px;
 }
 
-body {
-  background: var(--bg-page);
-  color: var(--text-primary);
-  /* line-height: 1.4; */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+.year-nav-center {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 18px;
 }
 
-/* Header */
-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin: 1rem 0;
+#todayBtn {
+    justify-self: start;
+    margin-left: 12px;
 }
 
-header button {
-  background: #0066ff;
-  color: white;
-  border: none;
-  padding: .5rem .8rem;
-  border-radius: .3rem;
-  cursor: pointer;
+.year-nav h1 {
+    min-width: 4ch;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
 }
 
-header button:hover {
-  background: #0052cc;
-}
-
-/* Calendar container */
+/* ---------- Calendar ---------- */
 #calendarContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10cm, 1fr));
-  gap: 1rem;
-  width: 90%;
-  max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
 }
 
-/* Individual month */
 .month {
-  background: var(--bg-calendar-hover);
-  border-radius: .5rem;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
+    padding: 14px 12px 12px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
 }
 
 .month h2 {
-  text-align: center;
-  background: #0066ff;
-  color: white;
-  margin: 0;
-  padding: .5rem 0;
-  /* font-size: 1rem; */
+    margin: 0 4px 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    /* keep the month clear of the sticky header bar when jumped to */
+    scroll-margin-top: 64px;
 }
 
-/* Days grid */
 .days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
 }
 
 .day-name,
 .day {
-  text-align: center;
-  padding: .4rem 0;
-  font-size: .85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .85rem;
 }
 
 .day-name {
-  background: var(--bg-select);
-  font-weight: bold;
+    padding-bottom: 4px;
+    font-size: .75rem;
+    font-weight: 700;
+    opacity: var(--dim-opacity);
 }
 
 .day {
-  border: 1px solid var(--border);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    font-variant-numeric: tabular-nums;
+}
+
+.day.blue,
+.day.red,
+.day.green {
+    color: #fff;
+    font-weight: 700;
+}
+
+.day.blue  { background: var(--turn-1-solid); }
+.day.red   { background: var(--turn-2-solid); }
+.day.green { background: var(--turn-3-solid); }
+
+/* one, two or three dots per turn, so the colour is not the only cue */
+.day.blue, .day.red, .day.green,
+.swatch {
+    position: relative;
+}
+
+.day.blue::after, .day.red::after, .day.green::after,
+.swatch::after {
+    content: "";
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    height: 3px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, #fff 1.3px, transparent 1.6px) 0 0 / 5px 3px repeat-x;
+}
+
+.swatch::after {
+    bottom: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.day.blue::after, .swatch.blue::after   { width: 5px; }
+.day.red::after, .swatch.red::after     { width: 10px; }
+.day.green::after, .swatch.green::after { width: 15px; }
+
+/* today */
+.day.active {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    font-weight: 800;
+}
+
+/* ---------- Legend & counter ---------- */
+.summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 36px;
+}
+
+.preferences-group .caption {
+    margin: -8px 0 12px 2px;
+}
+
+.swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    flex: none;
+}
+
+.swatch.blue  { background: var(--turn-1-solid); }
+.swatch.red   { background: var(--turn-2-solid); }
+.swatch.green { background: var(--turn-3-solid); }
+
+#daysCounter:empty {
+    display: none;
+}
+
+@media print {
+    .year-nav button,
+    .summary {
+        display: none;
+    }
+
+    .clamp {
+        max-width: none;
+        padding: 0;
+    }
+
+    .month {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        break-inside: avoid;
+    }
+
+    .day,
+    .day::after {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
 }

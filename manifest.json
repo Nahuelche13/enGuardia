@@ -1,8 +1,14 @@
 {
   "id": "enGuardia/v1",
   "name": "enGuardia",
+  "short_name": "enGuardia",
+  "description": "Calendario de turnos de guardia",
+  "lang": "es",
   "display": "standalone",
   "start_url": "./",
+  "scope": "./",
+  "background_color": "#fafafb",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "./icons/favicon-64.png",

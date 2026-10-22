@@ -1,32 +1,67 @@
-/* ---------- Cookie helpers (store 5 × 5 names) ---------- */
-function setCookie(name, value, days = 365) {
-  const exp = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)};expires=${exp};path=/`;
-}
-function getCookie(name) {
-  const m = document.cookie.match(new RegExp('(?:^|; )' + encodeURIComponent(name) + '=([^;]*)'));
-  return m ? decodeURIComponent(m[1]) : null;
+/* ---------- Saved names (5 × 5, kept in localStorage) ---------- */
+const emptyNames = () => Array.from({ length: 5 }, () => Array(5).fill(''));
+const isNameMatrix = arr =>
+  Array.isArray(arr) && arr.length === 5 && arr.every(g => Array.isArray(g) && g.length === 5);
+
+/* Older versions kept the names in a cookie: move them over once */
+function migrateCookieNames() {
+  const m = document.cookie.match(/(?:^|; )shiftNames=([^;]*)/);
+  if (!m) return null;
+  try {
+    const arr = JSON.parse(decodeURIComponent(m[1]));
+    if (!isNameMatrix(arr)) return null;
+    saveNames(arr);
+    // only drop the cookie once the names are safely stored
+    if (loadSetting('names') !== null)
+      document.cookie = 'shiftNames=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+    return arr;
+  } catch (e) {
+    return null;
+  }
 }
 
 /* Returns a 5‑element array, each element itself an array of 5 strings.
    Structure: names[groupIdx][rowIdx] */
 function loadSavedNames() {
-  const raw = getCookie('shiftNames');
-  if (!raw) return Array.from({ length: 5 }, () => Array(5).fill(''));
-  try {
-    const arr = JSON.parse(raw);
-    // Validate shape - must be 5×5
-    if (Array.isArray(arr) && arr.length === 5 && arr.every(g => Array.isArray(g) && g.length === 5))
-      return arr;
-    else
-      return Array.from({ length: 5 }, () => Array(5).fill(''));
-  } catch (e) {
-    return Array.from({ length: 5 }, () => Array(5).fill(''));
-  }
+  const arr = loadJSON('names', null) ?? migrateCookieNames();
+  return isNameMatrix(arr) ? arr : emptyNames();
 }
 function saveNames(arr) {
-  setCookie('shiftNames', JSON.stringify(arr));
+  saveJSON('names', arr);
 }
+
+/* ---------- Hand-edited shift cells ----------
+   Stored per modality and month as { "<mode>|<year>-<month>": { "<group>-<row>-<day>": text } } */
+function overridesKey(mode, year, month) {
+  return `${mode}|${year}-${month + 1}`;
+}
+function loadOverrides(mode, year, month) {
+  return loadJSON('overrides', {})[overridesKey(mode, year, month)] || {};
+}
+/* text === undefined removes the edit and brings back the computed turn */
+function saveOverride(mode, year, month, cellKey, text) {
+  const all = loadJSON('overrides', {});
+  const key = overridesKey(mode, year, month);
+  const edits = all[key] || {};
+  if (text === undefined) delete edits[cellKey];
+  else edits[cellKey] = text;
+  if (Object.keys(edits).length) all[key] = edits;
+  else delete all[key];
+  saveJSON('overrides', all);
+}
+
+/* Shows a cell's hand-edited text, or its computed turn when text is undefined */
+function showShift(td, text) {
+  const value = text ?? td.dataset.auto;
+  td.textContent = value;
+  if (['1', '2', '3'].includes(value)) td.dataset.turn = value;
+  else delete td.dataset.turn;
+  td.classList.toggle('edited', text !== undefined);
+  td.title = text !== undefined ? 'Editado a mano · Esc para restablecer' : '';
+}
+
+/* Spanish weekday initials, Sunday first (X = miércoles, to tell it from martes) */
+const WEEKDAY_INITIALS = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
 
 /* ---------- Populate month / year selectors ---------- */
 function populateSelects() {
@@ -44,6 +79,10 @@ function populateSelects() {
 function buildGroupTable(month, year, groupIdx, savedNames) {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const tbl = document.createElement('table');
+
+  // day of the month to highlight, or 0 if today is not in this month
+  const now = new Date();
+  const today = (now.getFullYear() === year && now.getMonth() === month) ? now.getDate() : 0;
 
   /* ---- colgroup (first column = name, rest = days) ---- */
   const cg = document.createElement('colgroup');
@@ -65,6 +104,7 @@ function buildGroupTable(month, year, groupIdx, savedNames) {
   for (let d = 1; d <= daysInMonth; d++) {
     const th = document.createElement('th');
     th.className = 'day-num';
+    if (d === today) th.classList.add('today');
     th.textContent = d;
     numRow.appendChild(th);
   }
@@ -76,11 +116,10 @@ function buildGroupTable(month, year, groupIdx, savedNames) {
   wkEmpty.className = 'name';
   wkRow.appendChild(wkEmpty);
   for (let d = 1; d <= daysInMonth; d++) {
-    const dateObj = new Date(year, month, d);
-    const wd = dateObj.toLocaleString('es-ES', { weekday: 'short' })[0].toUpperCase();
     const th = document.createElement('th');
     th.className = 'day-wk';
-    th.textContent = wd;
+    if (d === today) th.classList.add('today');
+    th.textContent = WEEKDAY_INITIALS[new Date(year, month, d).getDay()];
     wkRow.appendChild(th);
   }
   tbl.appendChild(wkRow);
@@ -94,6 +133,13 @@ function buildGroupTable(month, year, groupIdx, savedNames) {
     nameTd.className = 'name';
     nameTd.contentEditable = true;
     nameTd.textContent = savedNames[groupIdx][rowIdx] || '';
+    // Enter commits the name instead of inserting a line break
+    nameTd.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        nameTd.blur();
+      }
+    });
     // Save only this exact cell on blur
     nameTd.addEventListener('blur', () => {
       const all = loadSavedNames();          // fetch current full matrix
@@ -106,7 +152,25 @@ function buildGroupTable(month, year, groupIdx, savedNames) {
     for (let d = 1; d <= daysInMonth; d++) {
       const td = document.createElement('td');
       td.className = 'shift';
+      if (d === today) td.classList.add('today');
       td.contentEditable = true;
+      // Enter commits the edit, Esc brings back the computed turn
+      td.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === 'Escape') {
+          e.preventDefault();
+          if (e.key === 'Escape') td.dataset.reset = '1';
+          td.blur();
+        }
+      });
+      // Remember hand edits; typing the computed value back clears the edit
+      td.addEventListener('blur', () => {
+        const text = td.textContent.trim();
+        const edit = (td.dataset.reset || text === td.dataset.auto) ? undefined : text;
+        delete td.dataset.reset;
+        const mode = document.getElementById('mode').value;
+        saveOverride(mode, year, month, `${groupIdx}-${rowIdx}-${d}`, edit);
+        showShift(td, edit);
+      });
       tr.appendChild(td);
     }
     tbl.appendChild(tr);
@@ -117,6 +181,7 @@ function buildGroupTable(month, year, groupIdx, savedNames) {
 /* ---------- Autofill shift cells for ONE group ---------- */
 function autofillShifts(table, month, year, guardIdx) {
   const mode = document.getElementById('mode').value;
+  const edits = loadOverrides(mode, year, month);
   const rows = table.querySelectorAll('tr');
   // rows[0]=numbers, rows[1]=weekdays, rows[2..6]=worker rows
   for (let r = 2; r < rows.length; r++) {
@@ -124,13 +189,8 @@ function autofillShifts(table, month, year, guardIdx) {
     for (let d = 0; d < cells.length; d++) {
       const date = new Date(year, month, d + 1);
       const turn = getTurn(mode, guardIdx, date);
-      if (turn > 0) {
-        cells[d].textContent = turn;
-        cells[d].style.color = COLORS[turn];
-      } else {
-        cells[d].textContent = '';
-        cells[d].style.color = '';
-      }
+      cells[d].dataset.auto = turn > 0 ? turn : '';
+      showShift(cells[d], edits[`${guardIdx}-${r - 2}-${d + 1}`]);
     }
   }
 }
@@ -146,6 +206,21 @@ function generateSheet() {
   title.textContent = `${MONTHS[month]} ${year}`;
   container.appendChild(title);
 
+  // Legend for the turns used by the current modality
+  const mode = document.getElementById('mode').value;
+  const legend = document.createElement('ul');
+  legend.className = 'legend';
+  for (let t = 1; t <= turnsInMode(mode); t++) {
+    const li = document.createElement('li');
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.dataset.turn = t;
+    chip.textContent = t;
+    li.append(chip, TURN_NAMES[t]);
+    legend.appendChild(li);
+  }
+  container.appendChild(legend);
+
   const savedNames = loadSavedNames();   // 5 × 5 matrix
 
   // Create five independent groups
@@ -156,8 +231,12 @@ function generateSheet() {
     hdr.textContent = `Guardia ${g + 1}`;
     wrapper.appendChild(hdr);
 
+    // only the table scrolls sideways, so the group title stays put
     const tbl = buildGroupTable(month, year, g, savedNames);
-    wrapper.appendChild(tbl);
+    const scroller = document.createElement('div');
+    scroller.className = 'table-scroll';
+    scroller.appendChild(tbl);
+    wrapper.appendChild(scroller);
     container.appendChild(wrapper);
 
     autofillShifts(tbl, month, year, g);
@@ -166,6 +245,8 @@ function generateSheet() {
 
 /* ---------- Event wiring ---------- */
 populateSelects();
+bindSetting(document.getElementById('mode'), 'mode');
+saveSetting('view', 'month.html');   // index.html reopens the last view
 document.getElementById('generateBtn').addEventListener('click', generateSheet);
 document.getElementById('mode').addEventListener('change', generateSheet);
 document.getElementById('monthSel').addEventListener('change', generateSheet);
